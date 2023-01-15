@@ -82,11 +82,11 @@ Grâce à la fonction `frequence`, nous pouvons calculer le sens le plus fréque
 
 Afin de tester notre modèle, nous utilisons la fonction `baseline`. Cette fonction calcule le pourcentage de bonne prédiction ce qui nous permets d'avoir une information sur l'effience de notre modèle.
 
-Nous obtenons des valeurs autour de 80%
+Nous obtenons des valeurs autour de 82%
 
 ## Modèles et Tokenization de type BERT
 
-Nous allons utiliser un modèle pré-entrainé de type BERT appelé FlauBERT. Nous pouvons obtenir ce model déjà pré-entrainé grâce à HuggingFace.
+Nous allons utiliser un modèle de fine tuning de type BERT appelé FlauBERT. Nous pouvons obtenir ce model déjà pré-entrainé grâce à HuggingFace.
 
 Afin d'utiliser ce même modèles, nos données doivent être similaires aux données d'entraînement d'un point de vue architectural.
 
@@ -139,7 +139,7 @@ Une dernère methode `eval` permet d'évaluer le modèle sur différentes métri
 
 ### Entraînement du modèle
 
-Une fois le modèle créé, nous pouvons l'entraîner. Pour cela, nous utilisons la méthode `run_on_dataset` de la classe `WSDClassifier`. 
+Une fois le modèle importé, nous pouvons continuer de l'entraîner avec nos données. Pour cela, nous utilisons la méthode `run_on_dataset` de la classe `WSDClassifier`. 
 
 Pour analyser l'efficacité de notre modèle, nous utilisons les indicateurs `epoch_losses` et `val_accuracy` qui nous permettent de voir l'évolution de la perte et de la précision sur le jeu de validation.
 
@@ -151,24 +151,32 @@ Nous entraînons distinctement 4 modèles différents :
 
  - Un modèle avec poids.
 
- - Un modèle avec MLP lemmas.
+ - Un modèle avec MLP poids.
 
-Malheureusement, nous n'avons pas pu entraîner le modèle avec MLP lemmas et MLP poids, car nous n'avons pas pu obtenir de GPU pour entraîner le modèle, du fait de la limitation de ressources de Google Colab. 
+Malhereusement, les limitations de ressources de Google Colab nous ont empêché d'entraîner les différents modèles par nous mêmes. Nous utiliserons donc les résultats présents dans le code pour comparer les différents modèles et conclure sur les résultats.
+
+### Evaluation du modèle
+
+Lors du fine-tuning, la méthode `run_on_dataset` retourne les indicateurs `epoch_losses` et `val_accuracy` qui nous permettent de voir l'évolution de la perte et de la précision sur le jeu de validation.
+
+Les résultats obtenus sont les suivants :
+
+| Modèle | Dev Accuracy | Test Accuracy |
+| --- | --- | --- | 
+| Basique | 0.84 | 0.85 |
+| Poids | 0.85 | 0.86 |
+| MLP et poids | 0.86 | 0.86 |
+| MLP lemmas et poids | 0.86 | 0.87 | 
 
 
 ## Conclusion
 
 Nous avons pu voir que la méthode de Most Frequent Sense est une méthode simple et efficace pour la désambiguïsation de mots.
-Cependant, nous avons pu voir que cette méthode ne comporte qu'un préci de 80%, ce qui est loin d'être optimal.
+Cependant, nous avons pu voir que cette méthode ne comporte qu'un préci de 82%, ce qui est loin d'être optimal.
 
-Afin d'affiner la prédiction, nous sommes ammenés à utiliser des modèles plus complexes, comme BERT. Cependant, nous n'avons pas pu entraîner les modèles, car nous n'avons pas pu obtenir de GPU pour entraîner le modèle, du fait de la limitation de ressources de Google Colab.
+L'utilisation de fine-tuning sur un modèle pré-entrainé comme FlauBERT nous a permis d'obtenir des résultats plus intéressants. Nous avons pu voir que l'utilisation de MLP lemmas et poids nous a permis d'obtenir un score de 87% sur le jeu de test, ce qui est un score très intéressant.
 
-### Pour poursuivre
+Afin d'améliorer les résultats, il serait intéressant d'entraîner le modèle sur un plus grand nombre de données, et d'ajouter des informations supplémentaires comme les POS tags ou les dépendances syntaxiques.
 
-N'ayant pas pu entraîner les modèles, nous ne pouvons que présenter les résultats théoriques que nous aurions pu obtenir.
+De plus, il serait intéréssant d'entaîner le modèle avec différents hyperparamètres afin de trouver les meilleurs paramètres pour le modèle.
 
-Nous pouvons penser que les modèles auraient une précision plus élevée que 80%, étant le score obtenue avec la méthode de Most Frequent Sense.
-
-Nous pouvons penser que le modèle le plus performant serait le modèle avec MLP lemmas et poids, car il prend en compte les poids et les lemmes, ce qui permet d'affiner la prédiction. Toutefois en contrepartie, le temps d'entraînement devrait être plus long.
-
-Nous pouvons aussi imaginer améliorer les résultats en utilisant des hyperparamètres différents, comme la taille des tenseurs d'entrée et de sortie, la taille des tenseurs cachés du MLP, la taille des tenseurs d'embedding des lemmes, etc.
